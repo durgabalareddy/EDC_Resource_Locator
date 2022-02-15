@@ -1,0 +1,81 @@
+{% extends "ResourceLocator/base.html" %}
+
+{% load static %}
+
+{% block Title %}
+
+<link rel="shortcut icon" href="{% static 'ResourceLocator/static/img/icons/Dockers.png' %}" />
+
+<title>My Dockers</title>
+
+{% endblock Title %}
+
+{% block js_script %}
+
+{% endblock js_script %}
+
+{% block content %}
+
+
+            <div class="container-fluid p-0">
+
+            
+                <div class="row">
+                    
+
+                    <!-- Button trigger modal -->
+
+
+                    <div style="overflow: scroll;height: 800px"  id="instance_list">
+                        <div class="card">
+                            <div class="card-header">
+                            </div>
+                            <div class="card-body h-100">
+                                <table class="table table-bordered" style="overflow-x:auto;position: center;" id="Table">
+
+
+                <thead>
+                            <tr>
+                              <th scope="col" style="text-align:center">Case Number</th>
+                              <th scope="col" style="text-align:center"> Host </th>
+                              <th scope="col" style="text-align:center"> Version </th>
+                              <th scope="col" style="text-align:center"> Date </th>
+                              <th scope="col" style="text-align:center"> Region </th>
+                              <th scope="col" style="text-align:center"> Public Visibility </th>
+                              <th scope="col" style="text-align:center"> Note </th>
+                              <th scope="col" style="text-align:center"> Edit </th>
+                              
+                            </tr>
+                          </thead>
+                      
+                      <tbody>
+
+                           {% for docker in Dockers %}
+                        <tr >
+                        
+                          <td style="text-align:center;">{{docker.CaseNo}}</td>
+                          <td style="text-align:center;">{{docker.Host}}</td>
+                          <td style="text-align:center;"><p title="Current EDC Version"><img src="{% static 'ResourceLocator/static/img/icons/Current_Version.png' %}" height='20px;' title="Current EDC Version"/> {{docker.Version}}</p><p title="Deployed EDC Version"><img src="{% static 'ResourceLocator/static/img/icons/Deployed_Version.png' %}" height='20px;' title="Deployed EDC Version"/> {{docker.pVersion}}</td>
+                          <td style="text-align:center;"><p title="Docker Created Date"><img src="{% static 'ResourceLocator/static/img/icons/created.png' %}" height='20px;' title="Docker Created Date"/> {{docker.createdDate}}</p><p title="Docker Expiry Date"><img src="{% static 'ResourceLocator/static/img/icons/expiry.png' %}" height='20px;' title="Docker Expiry Date"/> {{docker.expiryDate}} </p></td>
+                          <td style="text-align:center;">{{docker.region}}</td>
+                          <td style="text-align:center;">{{docker.Visibilty}}</td>
+                          <td style="text-align:center;">{{docker.Note}}</td>
+                          <td style="text-align:center"><i class="align-middle me-2" data-feather="edit" style="cursor: pointer;" onclick="window.location.href = 'edit/{{docker.id}}';" id="{{docker.id}}"></i> <span class="align-middle"></span></td>
+
+                        </tr>
+                         {% endfor %}
+            </tbody>
+            <tfoot>
+        
+            </tfoot>
+                    </table>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+
+    </div>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,141 @@
+{% extends "ResourceLocator/base.html" %}
+
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+{% block Title %}
+
+<link rel="shortcut icon" href="{% static 'ResourceLocator/static/img/icons/ManageInstance.png' %}" />
+
+<title>Manage Instance</title>
+
+{% endblock Title %}
+
+{% block js_script %}
+
+<script>
+
+var xhr = new XMLHttpRequest();
+
+function start()
+{
+var instance = $( "#myselect" ).val();
+var URL="{% url 'start' %}"
+var list = [];
+list.push(instance);
+
+var output = document.getElementById("inputBio");
+output.value = "Starting....";
+
+        xhr.abort();
+        xhr.open('POST', URL, true);
+        xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+        xhr.send(list);
+        var temp;
+        setInterval(function() {
+        console.log(xhr.responseText);
+        if(xhr.responseText = temp)
+        {
+        console.log("found similar");
+        }
+          
+          output.value = xhr.responseText;
+          
+          temp = xhr.responseText
+        }, 60);
+}
+
+function stop()
+{
+var instance = $( "#myselect" ).val();
+var URL="{% url 'stop' %}"
+var list = [];
+list.push(instance);
+var output = document.getElementById("inputBio");
+output.value = "Stopping....";
+        xhr.abort();
+        xhr.open('POST', URL, true);
+        xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+        xhr.send(list);
+        setInterval(function() {
+          
+          output.value = xhr.responseText;
+          
+        }, 60);
+}
+
+</script>
+
+{% endblock js_script %}
+{% block content %}
+
+            <div class="container-fluid p-0">
+
+                <h1 class="h3 mb-3">ISC Instances</h1>
+
+                <div class="row">
+                    <div class="col-md-4 col-xl-3">
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Select Instance</h5>
+                            </div>
+                            <div class="card-body text-center">
+                                <form action="/Search" method="POST">
+              
+             <div class="mb-3">
+                <select class="form-select" id="myselect">
+        {% for instance in instances %}
+                    <option value="{{instance.VERSION}}">{{instance.VERSION}}</option>
+                  {% endfor %}
+                                           
+                </select>
+ 
+             </div>
+ 
+ <br>
+            
+ <div class="btn-group btn-group-lg mb-3" role="group" aria-label="Large button group">
+                                    <button type="button" class="btn btn-secondary" style="background-color: #008CBA;" onclick="start();">Start</button>
+                                    <button type="button" class="btn btn-secondary" style="background-color: #f44336;" onclick="stop();">Stop</button>
+                                </div>
+
+
+
+</form>		
+
+                            </div>
+                            
+                        </div>
+                    </div>
+
+
+                    <!-- Button trigger modal -->
+
+
+                    <div class="col-md-8 col-xl-9"  id="instance_list">
+                        <div class="card">
+                            <div class="card-header">
+                            </div>
+                            <div class="card-body h-100">
+
+                                <div class="mb-3">
+                                                        <label class="form-label" for="inputUsername">OUTCOME</label>
+                                                        <textarea rows="30" class="form-control" id="inputBio" placeholder="" style='background:black;color:white;' readonly></textarea>
+                                                    </div>
+    
+
+                                
+                                
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+
+
+
+	</div>
+</div>
+
+{% endblock content %}

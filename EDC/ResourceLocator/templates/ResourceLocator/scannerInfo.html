@@ -1,0 +1,101 @@
+{% extends "ResourceLocator/base.html" %}
+
+{% load static %}
+
+{% block Title %}
+
+<link rel="shortcut icon" href="{% static 'ResourceLocator/static/img/icons/ScannerInfo.png' %}" />
+<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/highlight.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css"> 
+
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+
+<script src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+
+
+<title>Scanner Information</title>
+
+{% endblock Title %}
+
+{% block js_script %}
+<script>hljs.highlightAll();</script>
+{% endblock js_script %}
+{% block content %}
+
+            <div class="container-fluid p-0">
+
+            
+                <div class="row">
+                    
+
+                    <!-- Button trigger modal -->
+
+
+                    <div style="overflow: scroll;height: 800px"  id="instance_list">
+                        <div class="card">
+                            <div class="card-header">
+
+                            
+                            </div>
+                            <div class="card-body h-100">
+
+                                <table class="table table-bordered" style="overflow-x:auto;position: center;" id="Table">
+
+
+                <thead>
+                            <tr>
+                              <th scope="col" style="text-align:center">Scanner</th>
+                              <th scope="col" style="text-align:center"> Provider ID </th>
+                              <th scope="col" style="text-align:center"> Scanner Type </th>
+                              <th scope="col" style="text-align:center"> Quick Links </th>
+                              <th scope="col" style="text-align:center"> Edit </th>
+
+                              
+                              
+                            </tr>
+                          </thead>
+                      
+                      <tbody>
+
+                           {% for scanner in Scanner_info %}
+                           
+                           {% if scanner.provider_id != 'dummy' %}
+                        <tr >
+                        
+                          <td style="text-align:center">{{scanner.resource_type}}</td>
+                          <td style="text-align:center">{{scanner.provider_id | safe | linebreaks}}</td>
+                          {% if scanner.MITI_Scanner == True %}
+                          <td style="text-align:center"><p style="color: #8b008b;">MITI Scanner </p></td>
+                          {% else %}
+                          <td style="text-align:center"><p style="color: #ff4f00;">Native Scanner </p></td>
+                          {% endif %}
+                          <td style="text-align:center">{{scanner.Quick_Links | safe | linebreaks}}</td>
+                          <td style="text-align:center"><i class="align-middle me-2" data-feather="edit" style="cursor: pointer;" onclick="window.location.href = 'edit/{{scanner.id}}';" id="{{scanner.id}}"></i> <span class="align-middle"></span></td>
+                        
+                        {% endif %}
+
+                        </tr>
+                         {% endfor %}
+            </tbody>
+            <tfoot>
+        
+            </tfoot>
+                    </table>
+    
+
+                                
+                                
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+
+            </div>
+
+{% endblock content %}

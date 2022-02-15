@@ -1,0 +1,97 @@
+{% load static %}
+<nav id="sidebar" class="sidebar" style="width: 10px;">
+    <div class="sidebar-content js-simplebar">
+        <a class="sidebar-brand">
+  <span class="align-middle">EDC</span>
+</a>
+
+        <ul class="sidebar-nav">
+
+            {% if request.path|slice:'1:-1' == 'login' or request.path|slice:'1:-1' == 'logout' or request.path|slice:'1:-1' == 'register'%}
+
+            <li class="sidebar-header">
+                User Space
+            </li>
+
+            <li class="sidebar-item {% if request.path|slice:'1:-1' == 'register' %} active {% endif %}">
+                <a class="sidebar-link" href="/register/">
+                    <i class="align-middle"><img src="{% static 'ResourceLocator/static/img/icons/Register.png' %}" height=20px;/></i> <span class="align-middle">Register</span>
+                  </a>
+            </li>
+
+                <li class="sidebar-item {% if request.path|slice:'1:-1' == 'login' %} active {% endif %}" >
+                <a class="sidebar-link" href="/login/">
+      <i class="align-middle"><img src="{% static 'ResourceLocator/static/img/icons/Login.png' %}" height=20px;/></i> <span class="align-middle">Login</span>
+    </a>
+            </li>
+            <li class="sidebar-item {% if request.path|slice:'1:-1' == 'logout' %} active {% endif %}" style=" {% if request.path|slice:'1:-1' != 'logout' %}display: none; {% endif %}">
+                <a class="sidebar-link" href="">
+      <i class="align-middle"><img src="{% static 'ResourceLocator/static/img/icons/Logout.png' %}" height=20px;/></i> <span class="align-middle">Logout</span>
+    </a>
+            </li>
+
+
+            {% else %}
+
+            {% if request.path|slice:'1:-1' == 'profile' or request.path|slice:'1:-1' == 'profilePasswordChange' %} 
+            
+            <li class="sidebar-header">
+                User Space
+            </li>
+
+            <li class="sidebar-item active" >
+                <a class="sidebar-link" href="/profile/" id="profilepage">
+      <i class="align-middle"><img src="{% static 'ResourceLocator/static/img/icons/profile.png' %}" height='20px;'/></i> <span class="align-middle">Profile</span>
+    </a>
+            </li>
+            
+            {% endif %}
+
+            <li class="sidebar-header">
+                Apps
+            </li>
+
+            {% for i in user.applicationList.all %}
+            {% for app in i.apps %}
+            {% if app == 'MyAssets' %}
+            <li class="sidebar-item {% if request.path|slice:'1:-1' == 'MyDockers' or request.path|slice:'1:-1' == 'MyResources' %} active {% endif %}">
+                    <a href="#auth" data-bs-toggle="collapse" class="sidebar-link collapsed">
+          <i class="align-middle"> <img src="{% static 'ResourceLocator/static/img/icons/' %}MyAssets.png" height='20px;'/> </i> <span class="align-middle">My Assets</span>
+        </a>
+                    <ul id="auth" class="sidebar-dropdown list-unstyled" data-bs-parent="#sidebar">
+                        <li class="sidebar-item {% if request.path|slice:'1:-1' == 'MyResources' %} active {% endif %}"><a class="sidebar-link" href="/MyResources/">Resources</a></li>
+                        <li class="sidebar-item {% if request.path|slice:'1:-1' == 'MyDockers' %} active {% endif %}"><a class="sidebar-link" href="/MyDockers/">Dockers</a></li>
+                    </ul>
+                </li>
+           {% else %}
+    <li class="sidebar-item {% if request.path|slice:'1:-1' == app %} active {% endif %}">
+        <a class="sidebar-link" href="/{{app}}/">
+<i class="align-middle"><img src="{% static 'ResourceLocator/static/img/icons/' %}{{app}}.png" height='20px;'/></i> <span class="align-middle">{{ app }}</span>
+</a>
+   </li>
+ 
+{% endif %}
+            {% endfor %}
+    {% endfor %}
+    {% if request.path|slice:'1:15' == 'MyDockers/edit' %}
+    <li class="sidebar-item active">
+     <a class="sidebar-link">
+ <i class="align-middle"><img src="{% static 'ResourceLocator/static/img/icons/' %}Edit.png" height='20px;'/></i> <span class="align-middle"></span></i> <span class="align-middle">Edit Docker</span>
+ </a>
+ </li>
+ {% endif %}
+
+ {% if request.path|slice:'1:17' == 'ScannerInfo/edit' %}
+    <li class="sidebar-item active">
+     <a class="sidebar-link">
+ <i class="align-middle"><img src="{% static 'ResourceLocator/static/img/icons/' %}Edit.png" height='20px;'/></i> <span class="align-middle"></span></i> <span class="align-middle">Edit Scanner</span>
+ </a>
+ </li>
+ {% endif %}
+
+    {% endif %}            
+            
+        </ul>
+
+    </div>
+</nav>

@@ -1,0 +1,83 @@
+{% extends "ResourceLocator/base.html" %}
+
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+{% block Title %}
+
+<link rel="shortcut icon" href="{% static 'ResourceLocator/static/img/icons/Feedback.png' %}" />
+
+<title>Feedback</title>
+
+{% endblock Title %}
+
+{% block js_script %}
+
+<script>
+ 
+function submitfeedback()
+{    
+		var URL="{% url 'Feedback' %}";
+
+        var list =[];
+        list.push(document.getElementById('HowHelped').value);
+        list.push(document.getElementById('WhatImproved').value);
+        
+        	var xhr = new XMLHttpRequest();
+		
+		xhr.open('POST', URL, true);
+		xhr.onload = function () {
+    // do something to response
+    	if(this.responseText == 'success'){
+			window.location.reload(true);
+		}
+		};
+		xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+		xhr.send(list);
+}
+
+</script>
+
+{% endblock js_script %}
+
+{% block content %}
+
+            <div class="container-fluid p-0">
+
+                <h1 class="h3 mb-3">Feedback</h1>
+
+                <div class="row">
+
+
+                    <!-- Button trigger modal -->
+
+
+                    <div class="col-md-8 col-xl-9"  id="instance_list">
+                        <div class="card">
+                            <div class="card-header">
+                            </div>
+                            <div class="card-body">
+
+                                <div class="mb-3">
+                                                        <label class="form-label" for="inputUsername">How this tool helped you</label>
+                                                        <textarea rows="5" class="form-control" id="HowHelped" placeholder="">{{Response.HowHelped}}</textarea>
+                                                    </div>
+    
+                                 <div class="mb-3">
+                                                        <label class="form-label" for="inputUsername">What can be added or improved</label>
+                                                        <textarea rows="5" class="form-control" id="WhatImproved" placeholder="">{{Response.WhatImproved}}</textarea>
+                                                    </div>
+                                
+                                
+                            </div>
+
+                            
+                        </div>
+                        <p>{% csrf_token %}<button id="button" class="btn btn-primary" onclick="submitfeedback()">Submit Response</button></p>
+                    </div>
+                    
+	</div>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,229 @@
+{% extends "ResourceLocator/base.html" %}
+
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+{% block Title %}
+<link rel="shortcut icon" href="{% static 'ResourceLocator/static/img/icons/ResourceLocator.png' %}" />
+
+<title>EDC Resource Locator</title>
+
+{% endblock Title %}
+
+{% block js_script %}
+
+<script>
+
+function show_list(instance,url,resource_type)
+{
+
+
+document.getElementById('span_type').innerText=resource_type;
+
+
+
+document.getElementById("loader").style.display = 'flex';
+
+
+    
+
+    $("#someTable tbody").empty();
+
+    //$("#someTable tbody").append("<tr><td>No</td><td>Resource</td><td>Available</td></tr>");
+
+	{% for resource in Resource_list %}
+	if ('{{resource.ins}}' == instance )
+	$("#someTable tbody").append("<tr><td><a href="+url+"/?wstate=(%27$obj%27:%27stringIdentity:"+'{{resource}}'+"@com.infa.products.ldm.admin.resources.ResourceConfiguration%27,%27$ws%27:ldmws) target='_blank'>"+'{{resource}}'+"</a></td><td>"+'{{resource.Config}}'+"</td><td>"+'{{resource.Owner}}'+"</td><td>"+'{{resource.createdTime}}'+"</td><td>"+'{{resource.modifiedTime}}'+"</td></tr>");
+	{% endfor %}
+
+    
+	if($("#someTable tr").length == 1)
+	{
+		$("#someTable tbody").append("<tr><td style='text-align:center'>Seems</td><td style='text-align:center'>like</td><td style='text-align:center'>No</td><td style='text-align:center'>Resource</td><td style='text-align:center'>Available</td></tr>");
+	}
+
+  document.getElementById("loader").style.display = 'none';
+
+  document.getElementById("someTable").style.display = 'inline-table';
+
+
+}
+</script>
+
+{% endblock js_script %}
+{% block content %}
+
+			<div class="container-fluid p-0">
+
+				<h1 class="h3 mb-3">EDC Instances</h1>
+
+				<div class="row">
+					<div class="col-md-4 col-xl-3">
+						<div class="card mb-3">
+							<div class="card-header">
+								<h5 class="card-title mb-0">Select Resource Type</h5>
+							</div>
+							<div class="card-body text-center">
+								<form action="/ResourceLocator/" method="POST">
+                                    {% csrf_token %}
+			  
+			 <div class="mb-3">
+				{{ form | crispy}}
+				
+			 </div>
+
+<button id="b3" type="submit" class="btn btn-primary">Search</button>
+
+
+</form>		
+							</div>
+							<hr class="my-0" />
+							<div class="card-body">
+								<h5 class="h6 card-title">Search Count</h5>
+								<p style="color: #ff4f00;">{{search_count}}</p>
+								
+							</div>
+							<hr class="my-0" />
+						</div>
+					</div>
+
+					<!-- Button trigger modal -->
+
+
+					<div class="col-md-8 col-xl-9"  id="instance_list">
+						<div class="card">
+							<div class="card-header">
+
+								<h5 class="card-title mb-0">Found Resource of Resource Type "<b style="color: #ff4f00;">{{resource_type}} </b>" in below Instances</h5>
+							</div>
+							<div class="card-body h-100">
+
+								<table class="table table-bordered" style="overflow-x:auto;position: center;" id="Table">
+
+
+				<thead>
+							<tr>
+							  <th scope="col" style="text-align:center">LDM Admin</th>
+							  <th scope="col" style="text-align:center"> No of Resources </th>
+							  <th scope="col" style="text-align:center"> LDM Status</th>
+                 <th scope="col" style="text-align:center"> Region </th>
+                 <th scope="col" style="text-align:center"> Admin Console </th>
+								 <th scope="col" style="text-align:center;" class="phone"> Resource List </th>
+							  
+							</tr>
+						  </thead>
+					  
+					  <tbody>
+
+						   
+                        {% for instance in instances %}
+						<tr id="" class="">
+						
+						  <td style="text-align:center"><a href="{{instance.HOST_NAME}}:{{instance.CATALOG_PORT}}/ldmadmin" target="_blank">{{instance}}</a></td>
+						  
+            {% for key, value in resource_count.items %}
+						  {% if key == instance %}
+						  <td style="text-align:center">{{ value }}</td>
+						  {% endif %}
+						{% endfor %}
+						  
+
+						  {% if instance.LDM_Status == True %}
+							<td style="text-align:center;"> <div class="mb-2">
+									<i class="align-middle me-2" data-feather="arrow-up-circle" style="color: green;"></i> <span class="align-middle"></span>
+								</div> </td>
+						{% else %}
+						<td style="text-align:center;"><div class="mb-2">
+									<i class="align-middle me-2" data-feather="arrow-down-circle" style="color: red;"></i> <span class="align-middle"></span>
+								</div></td>
+						{% endif %}
+						
+						<td style="text-align:center">{{instance.REGION}}</td>
+            <td style="text-align:center"><a href="{{instance.HOST_NAME}}:{{instance.ADMIN_CONSOLE_PORT}}/administrator" target="_blank"><i class="align-middle me-2" data-feather="external-link" style="cursor: pointer;"></i></a></td>
+            
+						<td style="text-align:center;" class="phone"> 
+
+							<div class="mb-2">
+									<i class="align-middle me-2" data-feather="external-link" id="{{instance}}" name="{{instance}}" style="cursor: pointer;" onclick="show_list('{{instance}}','{{instance.HOST_NAME}}:{{instance.CATALOG_PORT}}/ldmadmin','{{resource_type}}');document.getElementById('instance_list').style.display='none';document.getElementById('resource_list').style.display='inline';"></i> <span class="align-middle"></span>
+								</div>
+					  
+						</td>
+						
+
+						</tr>
+						 {% endfor %}
+			</tbody>
+					</table>
+	
+
+								
+								
+							</div>
+						<div class="card-footer">
+
+								<h5 class="card-title mb-0">Instance Status are Refreshed for every <b style="color: #ff4f00;"> 1 </b> Minute</h5>
+								<br>
+								<h5 class="card-title mb-0">Resource List Details are Refreshed for every <b style="color: #ff4f00;"> 15 </b> Minutes</h5>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="col-md-8 col-xl-9" style="overflow: scroll;display: none;height: 490px;" id="resource_list">
+
+						<div class="card">
+
+							<div id="loader" class="loader-wrapper" style="width: 100%;height: 420%;position: absolute;top: 0;left: 0;background-color: #ffffff;display:none;justify-content: center;align-items: center;">
+								<img src="" width="100px" />
+							</div>
+
+
+							
+							<div class="card-header">
+
+								<h5 class="card-title mb-0">Found Resource of Resource Type "<b style="color: #ff4f00;">{{resource_type}} </b>" in below Instances</h5>
+								
+								
+									<i class="align-middle me-2" data-feather="x-circle" style="cursor: pointer;float: right;" onclick="document.getElementById('instance_list').style.display='inline';document.getElementById('resource_list').style.display='none';" ></i> <span id="span_type" class="align-middle" style="display: none;"></span>
+
+									
+								
+							</div>
+							<div class="card-body h-100">
+
+						
+
+								<table class="table table-bordered" style="overflow: scroll;position: center;display: none;" id="someTable">
+
+
+				<thead>
+							<tr>
+							  <th scope="col" style="text-align:center">Resource</th>
+							  <th scope="col" style="text-align:center"> config </th>
+							  <th scope="col" style="text-align:center"> Owner </th>
+							  <th scope="col" style="text-align:center"> Created Date </th>
+							  <th scope="col" style="text-align:center"> Modified Date </th>
+							  
+							</tr>
+						  </thead>
+					  
+					  <tbody>
+
+			
+			</tbody>
+					</table>
+	
+
+								
+								
+							</div>
+						</div>
+					</div>
+
+
+				</div>
+
+			</div>
+
+{% endblock content %}

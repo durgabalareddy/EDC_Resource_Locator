@@ -1,0 +1,4 @@
+/EDC/static/*
+/Django_venv/
+/EDC/EDC/.env
+/EDC/logs/*

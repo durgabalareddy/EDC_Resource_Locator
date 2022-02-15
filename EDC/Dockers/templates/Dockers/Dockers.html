@@ -1,0 +1,111 @@
+{% extends "ResourceLocator/base.html" %}
+
+{% load static %}
+
+{% block Title %}
+
+<link rel="shortcut icon" href="{% static 'ResourceLocator/static/img/icons/Dockers.png' %}" />
+
+<title>Dockers</title>
+
+{% endblock Title %}
+
+{% block js_script %}
+
+{% endblock js_script %}
+
+{% block content %}
+
+            <div class="container-fluid p-0">
+            
+            <h1 class="h3 mb-3">{{user_object.region}} (Region) Dockers</h1>
+
+                <div class="row">
+                    
+
+                    <!-- Button trigger modal -->
+
+
+                    <div style="overflow: scroll;height: 800px"  id="instance_list">
+                        <div class="card">
+                            <div class="card-header">
+                            </div>
+                            <div class="card-body h-100">
+                            
+                            {% if 'ISC_MM_DSG' in user.groups.all.0.name %}
+                                <table class="table table-bordered" style="overflow-x:auto;position: center;" id="Table">
+
+
+                <thead>
+                            <tr>
+                              <th scope="col" style="text-align:center">Case Number</th>
+                              <th scope="col" style="text-align:center"> Host </th>
+                              <th scope="col" style="text-align:center"> Version </th>
+                              <th scope="col" style="text-align:center"> Date </th>
+                              <th scope="col" style="text-align:center"> Owner </th>
+                              <th scope="col" style="text-align:center"> Status </th>
+                              <th scope="col" style="text-align:center"> Note </th>
+                              
+                            </tr>
+                          </thead>
+                      
+                      <tbody>
+                            {% if Dockers %}
+                           {% for docker in Dockers %}
+                           {% if docker.pVersion.0 == 'E' and docker.Visibilty == True %}
+                        <tr >
+                        
+                          <td style="text-align:center;">{{docker.CaseNo}}</td>
+                          <td style="text-align:center;">{{docker.Host}}</td>
+                          <td style="text-align:center;"><p title="Current EDC Version"><img src="{% static 'ResourceLocator/static/img/icons/Current_Version.png' %}" height='20px;' title="Current EDC Version"/> {{docker.Version}}</p><p title="Deployed EDC Version"><img src="{% static 'ResourceLocator/static/img/icons/Deployed_Version.png' %}" height='20px;' title="Deployed EDC Version"/> {{docker.pVersion}}</td>
+                          <td style="text-align:center;"><p title="Docker Created Date"><img src="{% static 'ResourceLocator/static/img/icons/created.png' %}" height='20px;' title="Docker Created Date"/> {{docker.createdDate}}</p><p title="Docker Expiry Date"><img src="{% static 'ResourceLocator/static/img/icons/expiry.png' %}" height='20px;' title="Docker Expiry Date"/> {{docker.expiryDate}} </p></td>
+                          <td style="text-align:center;">{{docker.email | slice:"0:-16"}}</td>
+                          {% if docker.status == True %}
+							<td style="text-align:center;"> <div class="mb-2">
+									<i class="align-middle me-2" data-feather="arrow-up-circle" style="color: green;"></i> <span class="align-middle"></span>
+								</div> </td>
+						{% else %}
+						<td style="text-align:center;"><div class="mb-2">
+									<i class="align-middle me-2" data-feather="arrow-down-circle" style="color: red;"></i> <span class="align-middle"></span>
+								</div></td>
+						{% endif %}
+                          <td style="text-align:center;">{{docker.Note}}</td>
+
+                        </tr>
+                        {% endif %}
+                         {% endfor %}
+                         {% else %}
+                         
+                         <tr >
+                        
+                          <td style="text-align:center;">Looks Empty</td>
+                          <td style="text-align:center;">Please Update the</td>
+                          <td style="text-align:center;">Region</td>
+                          <td style="text-align:center;">In the Profile Page</td>
+                          <td style="text-align:center;">to view</td>
+                          <td style="text-align:center;">the respective</td>
+                          <td style="text-align:center;">Region Dockers</td>
+
+                        </tr>
+                        
+                         {% endif %}
+            </tbody>
+            <tfoot>
+        
+            </tfoot>
+                    </table>
+                    {% else %}
+                    <p> Thank you for showing Interest in viewing Dockers. But, seems like you don't have access to this page. Please contact Admin (dpadala@informatica.com) to get access to the page. </p>
+                    {% endif %}
+    
+                                
+                            </div>
+                        </div>
+                    </div>
+
+
+      
+    </div>
+</div>
+
+{% endblock content %}

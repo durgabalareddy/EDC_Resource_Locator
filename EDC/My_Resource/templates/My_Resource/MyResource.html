@@ -1,0 +1,170 @@
+{% extends "ResourceLocator/base.html" %}
+
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+{% block Title %}
+
+<link rel="shortcut icon" href="{% static 'ResourceLocator/static/img/icons/MyResources.png' %}" />
+
+<title>My Resources</title>
+
+{% endblock Title %}
+
+{% block js_script %}
+
+<script>
+$(document).ready(function() {
+    var table = $('#example').DataTable({
+		'columnDefs': [ {
+			'targets' : [0,1,2,3,6],
+			'orderable' : false,
+		}],
+        initComplete: function () {
+            this.api().columns([1,2,3]).every( function () {
+                var column = this;
+                var select = $('<select style="width:90%;"><option value=""></option></select>')
+                    .appendTo( $(column.footer()).empty() )
+                    .on( 'change', function () {
+                        var val = $.fn.dataTable.util.escapeRegex(
+                            $(this).val()
+                        );
+ 
+                        column
+                            .search( val ? '^'+val+'$' : '', true, false )
+                            .draw();
+                    } );
+ 
+                column.data().unique().sort().each( function ( d, j ) {
+                    select.append( '<option value="'+d+'">'+d+'</option>' )
+                } );
+            } );
+        }
+    });
+ 
+    $('#example tbody').on( 'click', 'tr', function () {
+        $(this).toggleClass('selected');
+		
+    } );
+ 
+    $('#button').click( function () {
+    
+    if(table.rows('.selected').data().length < 1)
+		{
+			alert("Seems like you have not selected any resource to update");
+		}
+		else
+		{
+     document.getElementById("button").innerHTML = "Saving";
+		document.getElementById("button").disabled = true;
+		var URL="{% url 'MyResources' %}"
+
+        var list =[];
+        
+        for(let i = 0 ; i < table.rows('.selected').data().length; i++)
+        {
+            list.push(table.rows('.selected').data()[i][6]);
+        }
+        
+		
+		var xhr = new XMLHttpRequest();
+		
+		xhr.open('POST', URL, true);
+		xhr.onload = function () {
+    // do something to response
+    	if(this.responseText == 'success'){
+			window.location.reload(true);
+		}
+		};
+		xhr.setRequestHeader("X-CSRFToken", '{{ csrf_token }}');
+		xhr.send(list);
+   }
+		
+    } );
+} );
+
+
+
+
+</script>
+
+{% endblock js_script %}
+{% block content %}
+
+			<div class="container-fluid p-0">
+				<h1 class="h3 mb-3">Manage Your Resources</h1>
+				<div class="row">
+
+					<!-- Button trigger modal -->
+
+
+
+					<div class="" id="resource_list">
+
+						<div class="card">
+
+							<div class="card-body">
+                                           
+								<table class="cell-border" style="width:100%" id="example">
+
+
+				<thead>
+							<tr>
+							  <th scope="col" style="text-align:center">Resource</th>
+							  <th scope="col" style="text-align:center"> config </th>
+							  <th scope="col" style="text-align:center"> Resource Type </th>
+							  <th scope="col" style="text-align:center"> Version </th>
+							  <th scope="col" style="text-align:center"> Created Date </th>
+							  <th scope="col" style="text-align:center"> Modified Date </th>
+							  <th scope="col" style="text-align:center">Mark for Deletion</th>
+							  
+							</tr>
+						  </thead>
+					  
+					  <tbody>
+						{% for resource in Resource_list %}
+						<tr>
+							<td style="text-align:center">{{resource.Resource_Name}}</td>
+							<td style="text-align:center">{{resource.Config}}</td>
+							<td style="text-align:center">{{resource.Resource_Type}}</td>
+							<td style="text-align:center">{{resource.ins}}</td>
+							<td style="text-align:center">{{resource.createdTime}}</td>
+							<td style="text-align:center">{{resource.modifiedTime}}</td>
+						  {% if resource.MarkForDeletion %}
+							<td style="text-align:center"><p name="{{resource.pk}}">Yes</p></td>
+							{% else %}
+							<td style="text-align:center"><p name="{{resource.pk}}">No</p></td>
+							{% endif %}
+						</tr>
+						{% endfor %}
+			
+			</tbody>
+			<tfoot>
+				<tr>
+					<th style="text-align:center">Resource</th>
+					<th>Config</th>
+					<th>Resource Type</th>
+					<th>version</th>
+					<th>Created Date</th>
+					<th>Modified Date</th>
+					<th style="text-align:center">Mark for Deletion</th>
+				</tr>
+			</tfoot>
+					</table>
+	
+					<hr>
+
+					<p>{% csrf_token %}<button id="button" class="btn btn-primary">Save Changes</button></p>
+			
+								<hr>
+                <p>Resources marked for deletion will be purged during the weekend</p>
+								<p>Select multiple resources for which you want to toggle the delete option by clicking on the resource name and then click on save changes</p>
+							</div>
+						</div>
+					</div>
+
+	</div>
+</div>
+
+{% endblock content %}
